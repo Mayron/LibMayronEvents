@@ -1,0 +1,7 @@
+## Interface: 90001
+## Title: LibMayronEvents
+## Notes: An event management library for World of Warcraft.
+## Version: 1.0.5
+## Dependencies: LibMayronObjects
+
+LibMayronEvents.lua

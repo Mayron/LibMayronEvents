@@ -1,5 +1,6 @@
 -- luacheck: ignore self 143 631
 local obj = _G.MayronObjects:GetFramework(); ---@type MayronObjects
+if (obj:Import("Pkg-MayronEvents.EventListener", true)) then return end
 
 ---@class PkgMayronEvents : Package
 local PkgMayronEvents = obj:Import("Pkg-MayronEvents");
@@ -240,15 +241,29 @@ PkgMayronEvents:DefineParams("boolean=true");
 ---will remain registered with the event listener. By default, this parameter will be assigned `true`.
 function C_EventListener:UnregisterAllEvents(data, includeCustomEvents)
   if (includeCustomEvents and obj:IsTable(data.customEvents)) then
+    local customEvents = obj:PopTable();
     for customEvent, _ in pairs(data.customEvents) do
+      customEvents[#customEvents + 1] = customEvent;
+    end
+
+    for _, customEvent in ipairs(customEvents) do
       self:UnregisterCustomEvent(customEvent);
     end
+
+    obj:PushTable(customEvents);
   end
 
   if (obj:IsTable(data.events)) then
+    local events = obj:PopTable();
     for event, _ in pairs(data.events) do
+      events[#events + 1] = event;
+    end
+
+    for _, event in ipairs(events) do
       self:UnregisterEvent(event);
     end
+
+    obj:PushTable(events);
   end
 end
 

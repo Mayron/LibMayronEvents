@@ -1,0 +1,9 @@
+## Interface: 90002
+## Title: Pkg-MayronEvents
+## Notes: A lightweight event management package for World of Warcraft.
+## Version: 2.0
+
+Pkg-MayronEvents.xml
+
+#### Uncomment this for testing:
+## Pkg-MayronEvents.Test.lua

@@ -38,6 +38,7 @@ end
 
 PkgMayronEvents:DefineParams("string");
 ---@param id string @A unique ID used to refer to the event listener when using the C_EventManager API.
+---Can also be set when using the event manager's `CreateEventListenerWithID` method.
 function C_EventListener:SetID(data, id)
   if (data.id == id) then return end
 
@@ -59,7 +60,7 @@ end
 
 PkgMayronEvents:DefineReturns("string");
 ---If the event listener has not been assigned a custom unique ID, it will return the unique memory address of the handler object.
----@return string @Returns the unique ID used to refer to the event listener when using the C_EventManager API.
+---@return string @Returns the unique ID used to refer to the event listener when using the EventManager API.
 function C_EventListener:GetID(data)
   return data.id;
 end
@@ -94,7 +95,7 @@ end
 ---and before the event-specific arguments. Each time this method is called, it will replace previously specified custom
 ---callback arguments. Therefore, calling this method with no arguments will remove all of them. Note: If you call this
 ---method with only `nil` then `nil` will still be passed as a custom callback argument.
----@param ... any @A list of custom callback arguments to be passed to the callback function each time it is executed.
+---@vararg any @A list of custom callback arguments to be passed to the callback function each time it is executed.
 function C_EventListener:SetCallbackArgs(data, ...)
   if (obj:IsTable(data.args)) then
     obj:EmptyTable(data.args);
@@ -121,7 +122,7 @@ function C_EventListener:RegisterEvent(data, event)
 end
 
 PkgMayronEvents:DefineParams("string", "...string");
----Helper function that takes a variable argument list of Blizzard event names and calls `RegisterEvent` for each one.
+---A helper method that takes a variable argument list of Blizzard event names and calls `RegisterEvent` for each one.
 ---@vararg string @A variable argument list of Blizzard event names register.
 function C_EventListener:RegisterEvents(_, ...)
   for i = 1, select("#", ...) do
@@ -145,12 +146,14 @@ function C_EventListener:RegisterUnitEvent(data, event, unit1, unit2, unit3)
 end
 
 PkgMayronEvents:DefineParams("table", "string", "?string", "?string", "boolean=true");
----Helper function that takes a table of Blizzard event names and calls RegisterUnitEvent for each one with the provided unitIDs.
+---A helper method that takes a table of Blizzard event names and calls RegisterUnitEvent for each one with the provided unitIDs.
 ---@param events table @A table containing the Blizzard unit events to register.
 ---@param unit1 string @A unitID to register with the unit event (e.g., "player").
 ---@param unit2 string @An optional 2nd unitID to register with the unit event (e.g., "target").
 ---@param unit3 string @An optional 3rd unitID to register with the unit event (e.g., "focus").
----@param pushTable boolean @Optional boolean value to override the default "true" to avoid recycling the table.
+---@param pushTable boolean @Optional boolean value to override the default "true" to avoid recycling the
+---table passed to the events parameter. If not set to false, the table will be emptied and added to an
+---internal stack for later use by the MayronObjects framework.
 function C_EventListener:RegisterUnitEvents(_, events, unit1, unit2, unit3, pushTable)
   for _, event in ipairs(events) do
     self:RegisterUnitEvent(event, unit1, unit2, unit3);
@@ -171,7 +174,7 @@ function C_EventListener:RegisterCustomEvent(data, customEvent)
 end
 
 PkgMayronEvents:DefineParams("string", "...string");
----Helper function that takes a variable argument list of custom event names and calls RegisterCustomEvent for each one.
+---A helper method that takes a variable argument list of custom event names and calls RegisterCustomEvent for each one.
 ---@vararg string @A variable argument list of (non-Blizzard) custom addon events to register.
 function C_EventListener:RegisterCustomEvents(_, ...)
   for i = 1, select("#", ...) do
@@ -199,7 +202,7 @@ function C_EventListener:UnregisterEvent(data, event)
 end
 
 PkgMayronEvents:DefineParams("string", "...string");
----Helper function that takes a variable argument list of Blizzard event names and calls `UnregisterEvent` for each one.
+---A helper method that takes a variable argument list of Blizzard event names and calls `UnregisterEvent` for each one.
 ---@vararg string @A variable argument list of Blizzard events to unregister.
 function C_EventListener:UnregisterEvents(_, ...)
   for i = 1, select("#", ...) do
@@ -222,7 +225,7 @@ function C_EventListener:UnregisterCustomEvent(data, customEvent)
 end
 
 PkgMayronEvents:DefineParams("string", "...string");
----Helper function that takes a variable argument list of custom event names and calls `UnregisterCustomEvent` for each one.
+---A helper method that takes a variable argument list of custom event names and calls `UnregisterCustomEvent` for each one.
 ---@vararg string @A variable argument list of (non-Blizzard) custom addon events to unregister.
 function C_EventListener:UnregisterCustomEvents(_, ...)
   for i = 1, select("#", ...) do

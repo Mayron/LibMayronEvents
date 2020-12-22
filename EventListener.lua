@@ -31,6 +31,7 @@ end
 -- destructor - you can manually destroy an event listener using `listener:Destroy()`, or by calling `listener:SetExecuteOnce(true)`
 -- and letting the event manager destroy it automatically after it's first execution. Do not call `__Destruct` directly!
 function C_EventListener:__Destruct(data)
+  self:UnregisterAllEvents();
   local managerData = data:GetFriendData(data.manager);
   managerData.listeners[data.id] = nil;
 end
